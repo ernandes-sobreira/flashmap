@@ -9,18 +9,16 @@
 <link rel="stylesheet" href="flashmap.css">
 </head>
 <body>
-
 <header class="top">
   <div class="brand"><span class="brandMark">⚡</span>FLASHMAP</div>
   <span class="role" id="roleBadge">...</span>
   <div class="topCenter">
     <span class="sessionClock" id="sessionClock">AULA 00:00:00</span>
-    <span class="online"><i class="dot" id="connDot"></i><span id="connText">Conectando</span> · <b id="online">1</b>/500</span>
+    <span class="online"><i class="dot" id="connDot"></i><span id="connText">Conectando</span> · <b id="online">0</b>/500</span>
   </div>
 </header>
 
 <main class="stage" id="stage">
-
   <section class="homeScene" id="homeScene">
     <div class="hero">
       <div class="eyebrow">SALA GEOESPACIAL AO VIVO</div>
@@ -32,7 +30,7 @@
 
   <section class="youtubeLayer" id="youtubeLayer">
     <div class="mediaChip">🎬 YOUTUBE LIVE</div>
-    <iframe id="youtubeFrame" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+    <iframe id="youtubeFrame" title="YouTube Live" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
   </section>
 
   <div class="professorRemote" id="professorRemote"></div>
@@ -41,24 +39,32 @@
     <div class="mediaChip" id="screenChip">🖥️ APRESENTAÇÃO AO VIVO</div>
   </div>
 
+  <div class="stageBanner" id="stageBanner"></div>
+
   <div class="guestTile" id="guestTile">
     <div id="guestVideo"></div>
     <div class="guestMeta">
       <span class="guestLive">NO PALCO</span>
       <span class="guestName" id="guestName">Participante</span>
+      <span class="guestAudio" id="guestAudio">●</span>
     </div>
   </div>
 
   <div class="localCam" id="localCam">
     <div class="camDrag" id="camDrag">
-      <span class="grip">•••</span><span>MINHA CÂMERA</span>
-      <button id="camMinus" type="button">−</button>
-      <button id="camPlus" type="button">＋</button>
+      <span class="grip">•••</span>
+      <span class="localCamName" id="localCamName">Ernandes</span>
+      <button id="camLeft" type="button" title="Canto esquerdo">↙</button>
+      <button id="camRight" type="button" title="Canto direito">↘</button>
+      <button id="camMinus" type="button" title="Diminuir">−</button>
+      <button id="camPlus" type="button" title="Aumentar">＋</button>
     </div>
     <video id="selfVideo" autoplay playsinline muted></video>
     <div class="micHud">
-      <span>🎤</span>
-      <div class="meter"><div class="meterFill" id="meterFill"></div></div>
+      <span class="micIcon">🎤</span>
+      <div class="vuMeter" id="vuMeter" aria-label="Nível do microfone">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
       <span class="micState" id="micState">MUDO</span>
     </div>
   </div>
@@ -68,6 +74,8 @@
     <div class="timerValue" id="timerValue">05:00</div>
     <div class="timerBar"><i id="timerBarFill"></i></div>
   </div>
+
+  <div class="recIndicator" id="recIndicator">⏺ REC <span id="recClock">00:00:00</span></div>
 
   <section class="board" id="board">
     <div class="boardBase">
@@ -79,20 +87,20 @@
     <div class="boardTop">
       <div class="boardTitle">🗺️ QUADRO CARTOGRÁFICO</div>
       <div class="boardModes">
-        <button class="active" data-board="map" type="button">🗺 Mapa</button>
-        <button data-board="grid" type="button">▦ Grade</button>
-        <button data-board="blank" type="button">□ Limpo</button>
+        <button class="active" data-board="map" type="button">🗺 MAPA</button>
+        <button data-board="grid" type="button">▦ GRADE CARTOGRÁFICA</button>
+        <button data-board="blank" type="button">□ QUADRO LIMPO</button>
       </div>
       <button class="closeBoard" id="closeBoard" type="button">✕</button>
     </div>
 
-    <canvas class="drawCanvas" id="boardInk"></canvas>
+    <canvas class="drawCanvas boardCanvas" id="boardCanvas"></canvas>
   </section>
 
-  <canvas class="screenInk" id="screenInk"></canvas>
+  <canvas class="presentationCanvas" id="presentationCanvas"></canvas>
 
   <div class="drawTools" id="drawTools">
-    <button data-tool="pan" class="active" type="button" title="Mover">✋</button>
+    <button data-tool="pan" class="active" type="button" title="Mover / interagir">✋</button>
     <button data-tool="pen" type="button" title="Caneta">✏️</button>
     <button data-tool="highlighter" type="button" title="Marca-texto">🖍️</button>
     <button data-tool="eraser" type="button" title="Borracha">🧽</button>
@@ -100,7 +108,13 @@
     <input id="inkSize" type="range" min="2" max="26" value="5" title="Espessura">
     <button id="undoInk" type="button" title="Desfazer">↶</button>
     <button id="clearInk" type="button" title="Limpar">🗑️</button>
-    <button id="stopInk" type="button" title="Fechar caneta">✕</button>
+    <button id="stopInk" type="button" title="Fechar ferramentas">✕</button>
+  </div>
+
+  <div class="studentStageControls" id="studentStageControls">
+    <span>🎙️ NO PALCO</span>
+    <button id="stageMicBtn" type="button">🎤 Mic</button>
+    <button id="stageCamBtn" type="button">🎥 Câmera</button>
   </div>
 
   <nav class="dock" id="dock">
@@ -120,14 +134,15 @@
     </div>
     <div class="actionGrid">
       <button id="presentBtn" type="button"><span>🖥️</span>Apresentar<small>QGIS / tela do computador</small></button>
-      <button id="annotateBtn" type="button"><span>✏️</span>Anotar tela<small>Caneta por cima da apresentação</small></button>
-      <button id="timerBtn" type="button"><span>⏱️</span>Temporizador<small>Presets ou tempo personalizado</small></button>
+      <button id="annotateBtn" type="button"><span>✏️</span>Anotar<small>Camada sobre a apresentação</small></button>
+      <button id="timerBtn" type="button"><span>⏱️</span>Timer<small>Atividade separada da aula</small></button>
       <button id="chatBtn" type="button"><span>💬</span>Chat<small>Conversa paralela da turma</small></button>
-      <button id="presenceBtn" type="button"><span>👥</span>Presença<small>Quem está online e há quanto tempo</small></button>
+      <button id="presenceBtn" type="button"><span>👥</span>Presença<small>Nomes e tempo conectado</small></button>
       <button id="stageBtn" type="button"><span>🎙️</span>Palco<small>Uma pessoa da turma por vez</small></button>
       <button id="reactionBtn" type="button"><span>✨</span>Reações<small>Emojis subindo pelo palco</small></button>
-      <button id="youtubeBtn" type="button"><span>🎬</span>YouTube Live<small>Cole o link da transmissão</small></button>
-      <button id="studentLinkBtn" type="button"><span>🔗</span>Link dos alunos<small>Leva o YouTube junto no link</small></button>
+      <button id="youtubeBtn" type="button"><span>🎬</span>YouTube Live<small>Transmissão de massa</small></button>
+      <button id="recordBtn" type="button"><span>⏺</span>Gravar<small>WebM local no computador</small></button>
+      <button id="studentLinkBtn" type="button"><span>🔗</span>Link dos alunos<small>Leva o YouTube no link</small></button>
       <button id="homeBtn" type="button"><span>⚡</span>Tela inicial<small>Voltar ao palco principal</small></button>
     </div>
   </section>
@@ -138,8 +153,8 @@
       <button class="sheetClose" type="button">✕</button>
     </div>
     <div class="sheetTools">
-      <button id="clearHandsBtn" type="button">Baixar todas as mãos</button>
-      <button id="removeStageBtn" class="dangerBtn" type="button">Retirar do palco</button>
+      <button id="clearHandsBtn" type="button">BAIXAR TODAS AS MÃOS</button>
+      <button id="removeStageBtn" class="dangerBtn" type="button">RETIRAR DO PALCO</button>
     </div>
     <div class="list" id="handsList"><div class="empty">Ninguém pediu para falar.</div></div>
   </section>
@@ -149,7 +164,7 @@
       <div><h3>👥 Presença ao vivo</h3><p><span id="presenceTotal">0</span> pessoas conectadas agora</p></div>
       <button class="sheetClose" type="button">✕</button>
     </div>
-    <div class="sheetTools"><button id="exportPresence" type="button">⬇️ Exportar CSV</button></div>
+    <div class="sheetTools"><button id="exportPresence" type="button">⬇️ EXPORTAR CSV</button></div>
     <div class="list" id="presenceList"></div>
   </section>
 
@@ -167,7 +182,7 @@
 
   <section class="sheet" id="timerSheet">
     <div class="sheetHead">
-      <div><h3>⏱️ Temporizador</h3><p>O tempo fica visível no palco.</p></div>
+      <div><h3>⏱️ Temporizador de atividade</h3><p>O relógio da AULA continua independente no topo.</p></div>
       <button class="sheetClose" type="button">✕</button>
     </div>
     <div class="timerPresets">
@@ -178,20 +193,21 @@
       <button data-min="15" type="button">15 min</button>
     </div>
     <div class="customTime">
-      <label>MINUTOS<br><input id="customMin" type="number" min="0" max="180" value="5"></label>
-      <label>SEGUNDOS<br><input id="customSec" type="number" min="0" max="59" value="0"></label>
-      <button class="miniBtn callBtn" id="applyCustom" type="button">USAR</button>
+      <label>MINUTOS<br><input id="customMin" type="number" min="0" max="180" value="5" inputmode="numeric"></label>
+      <label>SEGUNDOS<br><input id="customSec" type="number" min="0" max="59" value="0" inputmode="numeric"></label>
+      <button class="miniBtn callBtn" id="applyCustom" type="button">USAR TEMPO</button>
     </div>
     <div class="timerActions">
       <button class="startBtn" id="timerStart" type="button">▶ INICIAR</button>
       <button class="pauseBtn" id="timerPause" type="button">⏸ PAUSAR</button>
+      <button class="restartBtn" id="timerRestart" type="button">↻ REINICIAR</button>
       <button class="stopBtn" id="timerStop" type="button">✕ FECHAR</button>
     </div>
   </section>
 
-  <section class="sheet" id="reactionSheet">
+  <section class="sheet reactionSheet" id="reactionSheet">
     <div class="sheetHead">
-      <div><h3>✨ Reagir</h3><p>Toque. A reação sobe pelo palco.</p></div>
+      <div><h3>✨ Reagir</h3><p>Toque. A reação sobe pelo palco para toda a turma.</p></div>
       <button class="sheetClose" type="button">✕</button>
     </div>
     <div class="reactionGrid" id="reactionGrid">
@@ -204,7 +220,7 @@
 
   <section class="sheet" id="youtubeSheet">
     <div class="sheetHead">
-      <div><h3>🎬 YouTube Live</h3><p>Cole o link da live. Depois use “Link dos alunos”.</p></div>
+      <div><h3>🎬 YouTube Live</h3><p>Cole o link da live ou somente o VIDEO_ID.</p></div>
       <button class="sheetClose" type="button">✕</button>
     </div>
     <div class="youtubeForm">
@@ -212,15 +228,35 @@
       <button id="youtubeApply" type="button">USAR LIVE</button>
       <button id="youtubeClose" type="button">REMOVER</button>
     </div>
+    <div class="youtubeNote">YouTube faz a distribuição para a turma. O Firebase continua responsável pelas interações; o LiveKit fica reservado ao professor e a um convidado no palco.</div>
+  </section>
+
+  <section class="sheet" id="recordSheet">
+    <div class="sheetHead">
+      <div><h3>⏺ Gravação local</h3><p>Começa somente quando você escolher um modo.</p></div>
+      <button class="sheetClose" type="button">✕</button>
+    </div>
+    <div class="recordStatus" id="recordStatus">PRONTO PARA GRAVAR</div>
+    <div class="recordModes">
+      <button id="recordCamera" type="button"><span>🎥</span>CÂMERA + MICROFONE<small>Grava sua câmera e voz em WebM.</small></button>
+      <button id="recordScreen" type="button"><span>🖥️</span>TELA / QGIS + MICROFONE<small>Escolha a janela ou tela quando o navegador pedir.</small></button>
+    </div>
+    <div class="recordActions">
+      <button id="recordPause" type="button" disabled>⏸ PAUSAR</button>
+      <button id="recordStop" class="dangerBtn" type="button" disabled>⏹ FINALIZAR</button>
+      <a id="recordDownload" class="downloadBtn" download="flashmap-gravacao.webm">⬇️ BAIXAR WEBM</a>
+    </div>
+    <div class="recordNotice" id="recordNotice">A gravação do YouTube não é duplicada aqui: quando a aula estiver ao vivo no YouTube, o arquivamento pode ser feito pelo próprio YouTube.</div>
   </section>
 
   <section class="invite" id="stageInvite">
     <div class="inviteIcon">🎙️</div>
-    <h2>Você foi chamado ao palco.</h2>
-    <p>Só uma pessoa da turma fica com câmera/microfone liberados por vez.</p>
+    <div class="inviteKicker">FLASHMAP • PALCO AO VIVO</div>
+    <h2>VOCÊ FOI CHAMADO(A) AO PALCO</h2>
+    <p>Só uma pessoa da turma recebe câmera/microfone por vez.</p>
     <div class="inviteActions">
-      <button class="invitePrimary" id="joinStageVideo" type="button">🎥 Câmera + mic</button>
-      <button class="inviteSecondary" id="joinStageAudio" type="button">🎤 Só microfone</button>
+      <button class="invitePrimary" id="joinStageVideo" type="button">🎥 CÂMERA + MICROFONE</button>
+      <button class="inviteSecondary" id="joinStageAudio" type="button">🎤 SÓ MICROFONE</button>
     </div>
   </section>
 
@@ -231,12 +267,11 @@
     <div class="joinBox">
       <div class="logo">⚡ FLASHMAP</div>
       <h2>Como você quer aparecer?</h2>
-      <p>Esse nome entra na presença, chat e fila para falar.</p>
-      <input id="joinName" maxlength="40" placeholder="Seu nome">
+      <p>Digite seu nome. Ele aparecerá na presença, chat e fila para falar.</p>
+      <input id="joinName" maxlength="40" autocomplete="name" placeholder="Seu nome">
       <button id="joinNameBtn" type="button">ENTRAR NA AULA</button>
     </div>
   </section>
-
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
