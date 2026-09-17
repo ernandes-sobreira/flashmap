@@ -210,13 +210,17 @@
   function loadClassroomSync(){
     if(document.querySelector('script[data-flashmap-classroom-sync]'))return;
     const s=document.createElement("script");
-    s.src="classroom-sync.js?v=20260917-1";
+    s.src="classroom-sync.js?v=20260917-2";
     s.defer=true;
     s.dataset.flashmapClassroomSync="1";
     document.head.appendChild(s);
   }
 
+  function startClassroomSync(){
+    window.FM.ready.then(loadClassroomSync).catch(()=>{});
+  }
+
   boot();
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",loadClassroomSync,{once:true});
-  else loadClassroomSync();
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",startClassroomSync,{once:true});
+  else startClassroomSync();
 })();
