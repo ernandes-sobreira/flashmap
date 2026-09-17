@@ -10,6 +10,22 @@
     appId:"1:876718329822:web:e0e0254ee909a933dad74f"
   };
 
+  // Compartilha a MESMA configuração já usada pelo FLASHMAP com módulos auxiliares.
+  window.FLASHMAP_FIREBASE_CONFIG=cfg;
+
+  // O app.js cria o Leaflet depois deste arquivo. Capturamos apenas a instância do mapa
+  // do Quadro para permitir que os alunos sigam zoom/posição do professor via Firebase.
+  if(window.L?.map&&!window.__flashmapLeafletPatched){
+    window.__flashmapLeafletPatched=true;
+    const originalMap=window.L.map;
+    window.L.map=function(...args){
+      const map=originalMap.apply(this,args);
+      const target=args[0];
+      if(target==="mapBoard"||(target&&target.id==="mapBoard"))window.FLASHMAP_BOARD_MAP=map;
+      return map;
+    };
+  }
+
   const BASE="flashmap";
   const params=new URLSearchParams(location.search);
   const isStudent=params.get("role")==="student" || params.has("guest");
@@ -191,5 +207,16 @@
     }
   };
 
+  function loadClassroomSync(){
+    if(document.querySelector('script[data-flashmap-classroom-sync]'))return;
+    const s=document.createElement("script");
+    s.src="classroom-sync.js?v=20260917-1";
+    s.defer=true;
+    s.dataset.flashmapClassroomSync="1";
+    document.head.appendChild(s);
+  }
+
   boot();
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",loadClassroomSync,{once:true});
+  else loadClassroomSync();
 })();
