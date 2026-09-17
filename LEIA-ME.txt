@@ -1,0 +1,40 @@
+FLASHMAP V6 — pacote para substituir no GitHub
+
+SUBA ESTES 4 ARQUIVOS NA RAIZ:
+- index.html
+- flashmap.css
+- app.js
+- firebase-sync.js
+
+O que corrige/entrega:
+- emojis agora animam e aparecem;
+- câmera local pode ser aumentada, diminuída e ARRASTADA;
+- medidor de microfone integrado à própria câmera;
+- fila de mãos e Palco usam a MESMA fonte de dados;
+- CHAMAR / BAIXAR mão / BAIXAR TODAS;
+- aluno chamado recebe convite e controles de câmera/mic;
+- só um aluno por vez no palco;
+- presença ao vivo + tempo conectado + exportação CSV;
+- relógio da aula no topo;
+- temporizador 1/3/5/10/15 min + minutos/segundos personalizados;
+- Quadro Cartográfico com OSM, grade, fundo limpo, caneta,
+  marca-texto, borracha, desfazer e limpar;
+- caneta por cima da apresentação;
+- interface mobile com 5 ações no rodapé, sem fila infinita;
+- YouTube Live: professor cola o link e depois copia o link dos alunos;
+- o parâmetro ?yt=VIDEO_ID vai junto no link dos alunos.
+
+TESTE RÁPIDO
+1. Professor: abra a URL normal.
+2. Aluno: use o botão 'Link dos alunos'.
+3. Aluno informa o nome.
+4. Aluno levanta a mão.
+5. Professor > Mãos > CHAMAR.
+6. Aluno escolhe Câmera + mic.
+7. Professor testa Retirar do palco.
+8. Professor abre Presença.
+9. Professor testa Timer personalizado.
+10. Professor abre Quadro e desenha.
+11. Professor cola uma live em YouTube Live e copia novo link dos alunos.
+
+Compartilhar QGIS/tela exige computador/navegador com getDisplayMedia.

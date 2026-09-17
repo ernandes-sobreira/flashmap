@@ -2,70 +2,246 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<title>FLASHMAP</title>
-<style>
-:root{--bg:#07111f;--panel:#0d1a2b;--line:#22364e;--lime:#c8ff3d;--text:#f7f9fc;--muted:#8fa4bb}
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:Inter,system-ui}
-.top{height:54px;background:#091524;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 14px;gap:9px}
-.brand{font-size:19px;font-weight:950}.brand b{color:var(--lime)}.badge{font-size:10px;font-weight:900;background:#17283c;padding:5px 8px;border-radius:10px}.count{margin-left:auto;color:var(--muted);font-size:12px}
-.stage{height:calc(100dvh - 54px);position:relative;overflow:hidden}.hero{position:absolute;inset:0;display:grid;place-items:center;padding:30px}.hero>div{max-width:760px}
-.eyebrow{color:var(--lime);font-weight:950;letter-spacing:1.6px;font-size:12px}.hero h1{font-size:clamp(42px,7vw,84px);line-height:.94;letter-spacing:-4px;margin:12px 0}.hero p{color:var(--muted);font-size:17px}
-.status{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:30;background:#0d1a2bee;border:1px solid var(--line);border-radius:12px;padding:7px 11px;color:var(--muted);font-size:11px}
-.remote{position:absolute;inset:0;background:#02060b;z-index:10;display:none}.remote video{width:100%;height:100%;object-fit:contain}
-.selfwrap{position:absolute;z-index:22;left:18px;bottom:92px;width:230px;min-width:120px;max-width:75vw;background:#000;border:2px solid #34516e;border-radius:15px;overflow:hidden;resize:both}
-.selfwrap video{display:block;width:100%;aspect-ratio:16/9;object-fit:cover}.camtools{position:absolute;right:5px;top:5px;display:flex;gap:4px}.camtools button{border:0;border-radius:7px;background:#07111fcc;color:#fff;padding:5px 7px}
-.vu{position:absolute;z-index:40;left:50%;bottom:80px;transform:translateX(-50%);height:9px;width:min(420px,60vw);background:#1a2a3e;border-radius:10px;overflow:hidden;display:none}.vufill{height:100%;width:2%;background:linear-gradient(90deg,#55e67a,#c8ff3d,#ffb52e,#ff4057);transition:width .06s}
-.timer{position:absolute;z-index:45;right:18px;top:18px;background:#091524ee;border:1px solid var(--line);border-radius:16px;padding:10px 15px;font-size:30px;font-weight:950;display:none}
-.canvas{position:absolute;inset:0;z-index:18;pointer-events:none}.canvas.draw{pointer-events:auto;cursor:crosshair}
-.toolbar{position:absolute;z-index:50;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:5px;background:#091524f5;border:1px solid var(--line);padding:6px;border-radius:17px;max-width:calc(100vw - 14px);overflow-x:auto}
-.toolbar button{border:0;background:#14243a;color:#eef5fc;padding:10px 12px;border-radius:11px;font-weight:850;white-space:nowrap}.toolbar button.on,.toolbar .primary{background:var(--lime);color:#07111f}
-.sub{position:absolute;z-index:60;bottom:73px;left:50%;transform:translateX(-50%);background:#0d1a2bf8;border:1px solid var(--line);border-radius:15px;padding:9px;display:none;gap:6px;align-items:center}.sub.open{display:flex}.sub button{border:0;background:#17283c;color:white;border-radius:9px;padding:9px}
-.drawer{position:absolute;z-index:70;right:12px;top:60px;width:min(360px,calc(100vw - 24px));max-height:65vh;background:#0d1a2bf8;border:1px solid var(--line);border-radius:17px;padding:13px;display:none;overflow:auto}.drawer.open{display:block}.drawer h3{margin:0 0 10px}
-.msg,.hand{padding:9px;background:#14243a;border-radius:10px;margin:6px 0;font-size:13px}.msg b{color:var(--lime);display:block}
-.chatinput{display:flex;gap:6px;position:sticky;bottom:0;background:var(--panel);padding-top:8px}.chatinput input{min-width:0;flex:1;border:1px solid var(--line);background:#07111f;color:white;padding:11px;border-radius:10px}.chatinput button,.call{border:0;background:var(--lime);color:#07111f;border-radius:9px;padding:9px;font-weight:900}
-.toast{position:absolute;z-index:100;top:70px;left:50%;transform:translateX(-50%) translateY(-20px);background:#c8ff3d;color:#07111f;padding:12px 18px;border-radius:13px;font-weight:950;opacity:0;transition:.2s}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.reacts button{font-size:23px}.audioUnlock{position:absolute;z-index:90;top:70px;left:50%;transform:translateX(-50%);display:none;border:0;background:var(--lime);padding:12px 17px;border-radius:12px;font-weight:950}
-@media(max-width:700px){.hero{place-items:center start;padding:35px 22px 120px}.hero h1{font-size:42px;letter-spacing:-2px}.hero p{font-size:14px}.toolbar{left:7px;right:7px;transform:none;justify-content:flex-start}.toolbar button{padding:10px;font-size:12px}.selfwrap{width:145px;left:10px;bottom:82px}.vu{bottom:76px;width:55vw}.timer{font-size:23px;right:10px}.desktopOnly{display:none!important}}
-</style>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07111f">
+<title>FLASHMAP • Sala geoespacial ao vivo</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="flashmap.css">
 </head>
 <body>
-<header class="top"><div class="brand"><b>⚡</b> FLASHMAP</div><span class="badge" id="role">...</span><span class="count"><b id="online">1</b>/500</span></header>
+
+<header class="top">
+  <div class="brand"><span class="brandMark">⚡</span>FLASHMAP</div>
+  <span class="role" id="roleBadge">...</span>
+  <div class="topCenter">
+    <span class="sessionClock" id="sessionClock">AULA 00:00:00</span>
+    <span class="online"><i class="dot" id="connDot"></i><span id="connText">Conectando</span> · <b id="online">1</b>/500</span>
+  </div>
+</header>
+
 <main class="stage" id="stage">
-<section class="hero"><div><div class="eyebrow">SALA GEOESPACIAL AO VIVO</div><h1>O mapa virou<br>sala de aula.</h1><p id="welcome">Conectando…</p></div></section>
-<div class="remote" id="remote"></div><canvas class="canvas" id="ink"></canvas>
-<div class="selfwrap" id="selfwrap" style="display:none"><video id="self" autoplay playsinline muted></video><div class="camtools"><button id="smaller">−</button><button id="bigger">＋</button></div></div>
-<div class="vu" id="vu"><div class="vufill" id="vufill"></div></div><div class="timer" id="timer">05:00</div><div class="status" id="status">Conectando…</div>
-<button class="audioUnlock" id="audioUnlock">🔊 ATIVAR SOM</button><div class="toast" id="toast"></div>
-<div class="toolbar"><button id="mic">🎤 Mic</button><button id="cam">🎥 Câmera</button><button id="share" class="desktopOnly">🖥️ Apresentar</button><button id="draw">✏️ Anotar</button><button id="timerBtn">⏱️ Timer</button><button id="chatBtn">💬 Chat</button><button id="handsBtn">✋ Mãos <span id="handCount"></span></button><button id="stageBtn">👤 Palco</button><button id="moreBtn">😊</button></div>
-<div class="sub" id="drawSub"><button data-tool="pen">✏️</button><input id="color" type="color" value="#c8ff3d"><input id="size" type="range" min="2" max="18" value="5"><button data-tool="eraser">🧽</button><button id="undo">↶</button><button id="clear">🗑️</button></div>
-<div class="sub" id="timerSub"><button data-min="1">1m</button><button data-min="3">3m</button><button data-min="5">5m</button><button data-min="10">10m</button><button data-min="15">15m</button><button id="timerPause">▶</button><button id="timerReset">↺</button></div>
-<div class="sub reacts" id="reactSub"><button>🗺️</button><button>🌎</button><button>📍</button><button>🧭</button><button>🛰️</button><button>🔥</button><button>💧</button><button>👏</button></div>
-<aside class="drawer" id="chatDrawer"><h3>💬 CHAT AO VIVO</h3><div id="messages" data-chat-messages></div><div class="chatinput"><input id="chat" placeholder="Mensagem…" maxlength="300"><button id="send">↑</button></div></aside>
-<aside class="drawer" id="handsDrawer"><h3>✋ QUEREM FALAR</h3><div id="handQueue">Ninguém na fila.</div></aside>
+
+  <section class="homeScene" id="homeScene">
+    <div class="hero">
+      <div class="eyebrow">SALA GEOESPACIAL AO VIVO</div>
+      <h1>O mapa virou<br>sala de aula.</h1>
+      <p id="welcome">Preparando vídeo, áudio e ferramentas…</p>
+    </div>
+    <div class="orbit"></div>
+  </section>
+
+  <section class="youtubeLayer" id="youtubeLayer">
+    <div class="mediaChip">🎬 YOUTUBE LIVE</div>
+    <iframe id="youtubeFrame" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+  </section>
+
+  <div class="professorRemote" id="professorRemote"></div>
+
+  <div class="screenLayer" id="screenLayer">
+    <div class="mediaChip" id="screenChip">🖥️ APRESENTAÇÃO AO VIVO</div>
+  </div>
+
+  <div class="guestTile" id="guestTile">
+    <div id="guestVideo"></div>
+    <div class="guestMeta">
+      <span class="guestLive">NO PALCO</span>
+      <span class="guestName" id="guestName">Participante</span>
+    </div>
+  </div>
+
+  <div class="localCam" id="localCam">
+    <div class="camDrag" id="camDrag">
+      <span class="grip">•••</span><span>MINHA CÂMERA</span>
+      <button id="camMinus" type="button">−</button>
+      <button id="camPlus" type="button">＋</button>
+    </div>
+    <video id="selfVideo" autoplay playsinline muted></video>
+    <div class="micHud">
+      <span>🎤</span>
+      <div class="meter"><div class="meterFill" id="meterFill"></div></div>
+      <span class="micState" id="micState">MUDO</span>
+    </div>
+  </div>
+
+  <div class="activityTimer" id="activityTimer">
+    <div class="timerLabel">ATIVIDADE</div>
+    <div class="timerValue" id="timerValue">05:00</div>
+    <div class="timerBar"><i id="timerBarFill"></i></div>
+  </div>
+
+  <section class="board" id="board">
+    <div class="boardBase">
+      <div id="mapBoard"></div>
+      <div class="gridBase" id="gridBase"></div>
+      <div class="blankBase" id="blankBase"></div>
+    </div>
+
+    <div class="boardTop">
+      <div class="boardTitle">🗺️ QUADRO CARTOGRÁFICO</div>
+      <div class="boardModes">
+        <button class="active" data-board="map" type="button">🗺 Mapa</button>
+        <button data-board="grid" type="button">▦ Grade</button>
+        <button data-board="blank" type="button">□ Limpo</button>
+      </div>
+      <button class="closeBoard" id="closeBoard" type="button">✕</button>
+    </div>
+
+    <canvas class="drawCanvas" id="boardInk"></canvas>
+  </section>
+
+  <canvas class="screenInk" id="screenInk"></canvas>
+
+  <div class="drawTools" id="drawTools">
+    <button data-tool="pan" class="active" type="button" title="Mover">✋</button>
+    <button data-tool="pen" type="button" title="Caneta">✏️</button>
+    <button data-tool="highlighter" type="button" title="Marca-texto">🖍️</button>
+    <button data-tool="eraser" type="button" title="Borracha">🧽</button>
+    <input id="inkColor" type="color" value="#c9ff3c" title="Cor">
+    <input id="inkSize" type="range" min="2" max="26" value="5" title="Espessura">
+    <button id="undoInk" type="button" title="Desfazer">↶</button>
+    <button id="clearInk" type="button" title="Limpar">🗑️</button>
+    <button id="stopInk" type="button" title="Fechar caneta">✕</button>
+  </div>
+
+  <nav class="dock" id="dock">
+    <button id="micBtn" type="button"><span class="ico">🎤</span><span>Mic</span></button>
+    <button id="camBtn" type="button"><span class="ico">🎥</span><span>Câmera</span></button>
+    <button id="boardBtn" type="button"><span class="ico">🗺️</span><span>Quadro</span></button>
+    <button id="handsBtn" type="button"><span class="ico">✋</span><span id="handsLabel">Mãos</span><b id="handBadge"></b></button>
+    <button id="moreBtn" type="button"><span class="ico">•••</span><span>Mais</span></button>
+  </nav>
+
+  <div class="scrim" id="scrim"></div>
+
+  <section class="sheet" id="moreSheet">
+    <div class="sheetHead">
+      <div><h3>Ferramentas da aula</h3><p>O palco fica limpo. As ferramentas aparecem só quando você precisa.</p></div>
+      <button class="sheetClose" type="button">✕</button>
+    </div>
+    <div class="actionGrid">
+      <button id="presentBtn" type="button"><span>🖥️</span>Apresentar<small>QGIS / tela do computador</small></button>
+      <button id="annotateBtn" type="button"><span>✏️</span>Anotar tela<small>Caneta por cima da apresentação</small></button>
+      <button id="timerBtn" type="button"><span>⏱️</span>Temporizador<small>Presets ou tempo personalizado</small></button>
+      <button id="chatBtn" type="button"><span>💬</span>Chat<small>Conversa paralela da turma</small></button>
+      <button id="presenceBtn" type="button"><span>👥</span>Presença<small>Quem está online e há quanto tempo</small></button>
+      <button id="stageBtn" type="button"><span>🎙️</span>Palco<small>Uma pessoa da turma por vez</small></button>
+      <button id="reactionBtn" type="button"><span>✨</span>Reações<small>Emojis subindo pelo palco</small></button>
+      <button id="youtubeBtn" type="button"><span>🎬</span>YouTube Live<small>Cole o link da transmissão</small></button>
+      <button id="studentLinkBtn" type="button"><span>🔗</span>Link dos alunos<small>Leva o YouTube junto no link</small></button>
+      <button id="homeBtn" type="button"><span>⚡</span>Tela inicial<small>Voltar ao palco principal</small></button>
+    </div>
+  </section>
+
+  <section class="sheet" id="handsSheet">
+    <div class="sheetHead">
+      <div><h3>✋ Fila para falar</h3><p id="stageNow">Ninguém no palco.</p></div>
+      <button class="sheetClose" type="button">✕</button>
+    </div>
+    <div class="sheetTools">
+      <button id="clearHandsBtn" type="button">Baixar todas as mãos</button>
+      <button id="removeStageBtn" class="dangerBtn" type="button">Retirar do palco</button>
+    </div>
+    <div class="list" id="handsList"><div class="empty">Ninguém pediu para falar.</div></div>
+  </section>
+
+  <section class="sheet" id="presenceSheet">
+    <div class="sheetHead">
+      <div><h3>👥 Presença ao vivo</h3><p><span id="presenceTotal">0</span> pessoas conectadas agora</p></div>
+      <button class="sheetClose" type="button">✕</button>
+    </div>
+    <div class="sheetTools"><button id="exportPresence" type="button">⬇️ Exportar CSV</button></div>
+    <div class="list" id="presenceList"></div>
+  </section>
+
+  <section class="sheet" id="chatSheet">
+    <div class="sheetHead">
+      <div><h3>💬 Chat ao vivo</h3><p>Mensagens rápidas da turma</p></div>
+      <button class="sheetClose" type="button">✕</button>
+    </div>
+    <div class="chatLog" id="chatLog"></div>
+    <div class="chatComposer">
+      <input id="chatInput" maxlength="300" placeholder="Escreva uma mensagem…">
+      <button id="chatSend" type="button">↑</button>
+    </div>
+  </section>
+
+  <section class="sheet" id="timerSheet">
+    <div class="sheetHead">
+      <div><h3>⏱️ Temporizador</h3><p>O tempo fica visível no palco.</p></div>
+      <button class="sheetClose" type="button">✕</button>
+    </div>
+    <div class="timerPresets">
+      <button data-min="1" type="button">1 min</button>
+      <button data-min="3" type="button">3 min</button>
+      <button data-min="5" type="button">5 min</button>
+      <button data-min="10" type="button">10 min</button>
+      <button data-min="15" type="button">15 min</button>
+    </div>
+    <div class="customTime">
+      <label>MINUTOS<br><input id="customMin" type="number" min="0" max="180" value="5"></label>
+      <label>SEGUNDOS<br><input id="customSec" type="number" min="0" max="59" value="0"></label>
+      <button class="miniBtn callBtn" id="applyCustom" type="button">USAR</button>
+    </div>
+    <div class="timerActions">
+      <button class="startBtn" id="timerStart" type="button">▶ INICIAR</button>
+      <button class="pauseBtn" id="timerPause" type="button">⏸ PAUSAR</button>
+      <button class="stopBtn" id="timerStop" type="button">✕ FECHAR</button>
+    </div>
+  </section>
+
+  <section class="sheet" id="reactionSheet">
+    <div class="sheetHead">
+      <div><h3>✨ Reagir</h3><p>Toque. A reação sobe pelo palco.</p></div>
+      <button class="sheetClose" type="button">✕</button>
+    </div>
+    <div class="reactionGrid" id="reactionGrid">
+      <button type="button">🗺️</button><button type="button">🌎</button>
+      <button type="button">📍</button><button type="button">🧭</button>
+      <button type="button">🛰️</button><button type="button">🔥</button>
+      <button type="button">💧</button><button type="button">👏</button>
+    </div>
+  </section>
+
+  <section class="sheet" id="youtubeSheet">
+    <div class="sheetHead">
+      <div><h3>🎬 YouTube Live</h3><p>Cole o link da live. Depois use “Link dos alunos”.</p></div>
+      <button class="sheetClose" type="button">✕</button>
+    </div>
+    <div class="youtubeForm">
+      <input id="youtubeInput" placeholder="https://youtube.com/watch?v=...">
+      <button id="youtubeApply" type="button">USAR LIVE</button>
+      <button id="youtubeClose" type="button">REMOVER</button>
+    </div>
+  </section>
+
+  <section class="invite" id="stageInvite">
+    <div class="inviteIcon">🎙️</div>
+    <h2>Você foi chamado ao palco.</h2>
+    <p>Só uma pessoa da turma fica com câmera/microfone liberados por vez.</p>
+    <div class="inviteActions">
+      <button class="invitePrimary" id="joinStageVideo" type="button">🎥 Câmera + mic</button>
+      <button class="inviteSecondary" id="joinStageAudio" type="button">🎤 Só microfone</button>
+    </div>
+  </section>
+
+  <button class="audioUnlock" id="audioUnlock" type="button">🔊 ATIVAR SOM</button>
+  <div class="toast" id="toast"></div>
+
+  <section class="joinCard" id="joinCard">
+    <div class="joinBox">
+      <div class="logo">⚡ FLASHMAP</div>
+      <h2>Como você quer aparecer?</h2>
+      <p>Esse nome entra na presença, chat e fila para falar.</p>
+      <input id="joinName" maxlength="40" placeholder="Seu nome">
+      <button id="joinNameBtn" type="button">ENTRAR NA AULA</button>
+    </div>
+  </section>
+
 </main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/livekit-client@2.22.3/dist/livekit-client.umd.min.js"></script>
 <script src="firebase-sync.js"></script>
-<script>
-const $=x=>document.getElementById(x),q=new URLSearchParams(location.search),guest=q.has('guest')||q.get('role')==='student',id=(guest?'Aluno-':'Professor-')+Math.random().toString(36).slice(2,7);
-$('role').textContent=guest?'👤 ALUNO':'🎓 PROFESSOR';
-let room,cam=false,mic=false,audioCtx,analyser,raf,hands=[];
-function stat(s){$('status').textContent=s} function toast(s){$('toast').textContent=s;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),3000)}
-async function connect(){try{let ts=LivekitClient.TokenSource.sandboxTokenServer('flashmap-7br9z6'),c=await ts.fetch({roomName:'flashmap-aula',participantIdentity:id,participantName:guest?'Aluno':'Ernandes'});room=new LivekitClient.Room({adaptiveStream:true,dynacast:true});room.on(LivekitClient.RoomEvent.TrackSubscribed,(t)=>{if(t.kind==='audio'){let e=t.attach();e.autoplay=true;document.body.append(e);e.play().catch(()=>$('audioUnlock').style.display='block')}else{let e=t.attach();e.autoplay=true;e.playsInline=true;$('remote').innerHTML='';$('remote').append(e);$('remote').style.display='block'}});await room.connect(c.serverUrl,c.participantToken);stat('🟢 Conectado');$('welcome').textContent=guest?'Você está na aula.':'Pronto para a aula.'}catch(e){stat('🔴 '+e.message)}}
-async function toggleCam(){if(!room)return;cam=!cam;await room.localParticipant.setCameraEnabled(cam,{resolution:{width:1280,height:720},frameRate:24});let p=room.localParticipant.getTrackPublication(LivekitClient.Track.Source.Camera);if(cam&&p?.track){$('self').srcObject=new MediaStream([p.track.mediaStreamTrack]);$('selfwrap').style.display='block'}else $('selfwrap').style.display='none';$('cam').classList.toggle('on',cam)}
-async function toggleMic(){if(!room)return;mic=!mic;await room.localParticipant.setMicrophoneEnabled(mic,{echoCancellation:true,noiseSuppression:true,autoGainControl:true});$('mic').classList.toggle('on',mic);$('vu').style.display=mic?'block':'none';if(mic)meter();else cancelAnimationFrame(raf)}
-async function meter(){let p=room.localParticipant.getTrackPublication(LivekitClient.Track.Source.Microphone);if(!p?.track)return;audioCtx ||= new AudioContext();let src=audioCtx.createMediaStreamSource(new MediaStream([p.track.mediaStreamTrack]));analyser=audioCtx.createAnalyser();analyser.fftSize=256;src.connect(analyser);let data=new Uint8Array(analyser.frequencyBinCount);function tick(){analyser.getByteFrequencyData(data);let avg=data.reduce((a,b)=>a+b,0)/data.length;$('vufill').style.width=Math.min(100,avg*1.7)+'%';raf=requestAnimationFrame(tick)}tick()}
-async function present(){if(!navigator.mediaDevices?.getDisplayMedia)return toast('🖥️ Apresentar QGIS está disponível no computador.');try{await room.localParticipant.setScreenShareEnabled(true,{audio:true})}catch(e){toast('Não foi possível apresentar: '+e.message)}}
-$('audioUnlock').onclick=()=>{document.querySelectorAll('audio').forEach(a=>a.play());$('audioUnlock').style.display='none'};$('cam').onclick=toggleCam;$('mic').onclick=toggleMic;$('share').onclick=present;
-$('bigger').onclick=()=>selfwrap.style.width=Math.min(innerWidth*.75,selfwrap.offsetWidth+70)+'px';$('smaller').onclick=()=>selfwrap.style.width=Math.max(120,selfwrap.offsetWidth-70)+'px';
-function drawer(x){['chatDrawer','handsDrawer'].forEach(i=>$(i).classList.toggle('open',i===x&&!$(i).classList.contains('open')))}
-$('chatBtn').onclick=()=>drawer('chatDrawer');$('handsBtn').onclick=()=>drawer('handsDrawer');$('stageBtn').onclick=()=>{drawer('handsDrawer');toast(hands.length?'Escolha quem quer falar.':'Ninguém pediu para falar.')};
-$('send').onclick=()=>{if($('chat').value.trim()){FM.chat($('chat').value);$('chat').value=''}};$('chat').onkeydown=e=>{if(e.key==='Enter')$('send').click()};
-window.addEventListener('fm:hands',e=>{let old=hands.length;hands=e.detail||[];if(hands.length>old&&!guest)toast('✋ '+hands[hands.length-1].name+' quer falar');$('handCount').textContent=hands.length?hands.length:'';$('handQueue').innerHTML=hands.length?hands.map(x=>`<div class="hand">✋ ${x.name}</div>`).join(''):'Ninguém na fila.'});
-if(guest){['cam','mic','share','draw','timerBtn','stageBtn'].forEach(i=>$(i).style.display='none');$('handsBtn').onclick=()=>FM.hand();$('handsBtn').innerHTML='✋ Levantar mão'}
-$('moreBtn').onclick=()=>reactSub.classList.toggle('open');reactSub.querySelectorAll('button').forEach(b=>b.onclick=()=>FM.react(b.textContent));$('draw').onclick=()=>{drawSub.classList.toggle('open');ink.classList.toggle('draw');$('draw').classList.toggle('on')};$('timerBtn').onclick=()=>timerSub.classList.toggle('open');
-let total=300,left=300,tickInt=null,running=false;function renderTimer(){$('timer').textContent=String(Math.floor(left/60)).padStart(2,'0')+':'+String(left%60).padStart(2,'0');$('timer').style.display='block'}
-timerSub.querySelectorAll('[data-min]').forEach(b=>b.onclick=()=>{total=left=+b.dataset.min*60;renderTimer()});$('timerPause').onclick=()=>{running=!running;$('timerPause').textContent=running?'⏸':'▶';clearInterval(tickInt);if(running)tickInt=setInterval(()=>{if(left>0){left--;renderTimer()}else{clearInterval(tickInt);running=false;toast('⏱️ Tempo encerrado!')}},1000)};$('timerReset').onclick=()=>{left=total;renderTimer()};
-const ctx=ink.getContext('2d');let drawing=false,tool='pen',history=[];function fit(){let d=devicePixelRatio||1;ink.width=stage.clientWidth*d;ink.height=stage.clientHeight*d;ink.style.width=stage.clientWidth+'px';ink.style.height=stage.clientHeight+'px';ctx.setTransform(d,0,0,d,0,0)}fit();addEventListener('resize',fit);
-function pos(e){let r=ink.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}function start(e){drawing=true;history.push(ink.toDataURL());ctx.beginPath();ctx.moveTo(...pos(e))}function move(e){if(!drawing)return;ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=+$('size').value;ctx.globalCompositeOperation=tool==='eraser'?'destination-out':'source-over';ctx.strokeStyle=$('color').value;ctx.lineTo(...pos(e));ctx.stroke()}ink.addEventListener('pointerdown',start);ink.addEventListener('pointermove',move);addEventListener('pointerup',()=>drawing=false);drawSub.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>tool=b.dataset.tool);$('clear').onclick=()=>{history.push(ink.toDataURL());ctx.clearRect(0,0,ink.width,ink.height)};$('undo').onclick=()=>{let u=history.pop();if(!u)return;let im=new Image();im.onload=()=>{ctx.clearRect(0,0,ink.width,ink.height);ctx.drawImage(im,0,0,stage.clientWidth,stage.clientHeight)};im.src=u};connect();
-</script></body></html>
+<script src="app.js"></script>
+</body>
+</html>
